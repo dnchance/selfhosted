@@ -1,0 +1,44 @@
+version: "3.6"
+services:
+  nextcloud:
+    image: linuxserver/nextcloud
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - /var/data/config/portal/nextcloud:/config
+      - /var/data/nextcloud:/data
+    networks:
+      - traefik_public
+    deploy:
+      labels:
+        - traefik.port=80
+        - traefik.frontend.rule=Host:onecloud.thechances.us
+        - traefik.frontend.auth.forward.address=http://traefik-forward-auth:4181
+        - traefik.frontend.auth.forward.trustForwardHeader=true  
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+  organizr:
+    image: organizrtools/organizr-v2
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - /var/data/config/portal/organizr:/config
+    networks:
+      - traefik_public
+    deploy:
+      labels:
+        - traefik.port=80
+        - traefik.frontend.rule=Host:portal.thechances.us
+        - traefik.frontend.auth.forward.address=http://traefik-forward-auth:4181
+        - traefik.frontend.auth.forward.trustForwardHeader=true  
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+networks:
+  traefik_public:
+    external: true

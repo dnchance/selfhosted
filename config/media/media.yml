@@ -1,0 +1,92 @@
+---
+version: "3.6"
+services:
+  radarr:
+    image: ghcr.io/linuxserver/radarr:latest
+    environment:
+      - PUID=1027
+      - PGID=1000
+      - TZ=America/Chicago
+      - UMASK_SET=022 #optional
+    volumes:
+      - /var/data/config/media/radarr:/config
+      - /mnt/media:/media
+    networks:
+        - traefik_public
+    deploy:
+      labels:
+        - traefik.port=7878
+        - traefik.frontend.rule=Host:radarr.thechances.us
+        - traefik.frontend.auth.forward.address=http://traefik-forward-auth:4181
+        - traefik.frontend.auth.forward.trustForwardHeader=true  
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    
+  sonarr:
+    image: ghcr.io/linuxserver/sonarr:preview
+    environment:
+      - PUID=1027
+      - PGID=1000
+      - TZ=America/Chicago
+      - UMASK_SET=022 #optional
+    volumes:
+      - /var/data/config/media/sonarr:/config
+      - /mnt/media:/media
+    networks:
+        - traefik_public
+    deploy:
+      labels:
+        - traefik.port=8989
+        - traefik.frontend.rule=Host:sonarr.thechances.us
+        - traefik.frontend.auth.forward.address=http://traefik-forward-auth:4181
+        - traefik.frontend.auth.forward.trustForwardHeader=true  
+      restart_policy:
+        condition: on-failure
+        delay: 5s 
+    
+  sabnzbd:
+    image: ghcr.io/linuxserver/sabnzbd
+    environment:
+      - PUID=1027
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - /var/data/config/media/sabnzbd:/config
+      - /mnt/media:/media
+    networks:
+        - traefik_public
+    deploy:
+      labels:
+        - traefik.port=8080
+        - traefik.frontend.rule=Host:sabnzbd.thechances.us
+        - traefik.frontend.auth.forward.address=http://traefik-forward-auth:4181
+        - traefik.frontend.auth.forward.trustForwardHeader=true  
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+  
+  hydra:
+    image: ghcr.io/linuxserver/hydra
+    environment:
+      - PUID=1027
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - /var/data/config/media/hydra:/config
+      - /mnt/media:/media
+    networks:
+        - traefik_public
+    deploy:
+      labels:
+        - traefik.port=5075
+        - traefik.frontend.rule=Host:hydra.thechances.us
+        - traefik.frontend.auth.forward.address=http://traefik-forward-auth:4181
+        - traefik.frontend.auth.forward.trustForwardHeader=true  
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        
+networks:
+  traefik_public:
+    external: true

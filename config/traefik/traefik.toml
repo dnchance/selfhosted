@@ -1,0 +1,39 @@
+checkNewVersion = true
+defaultEntryPoints = ["http", "https"]
+
+# This section enable LetsEncrypt automatic certificate generation / renewal
+[acme]
+email = "dnchance@gmail.com"
+storage = "acme.json" # or "traefik/acme/account" if using KV store
+entryPoint = "https"
+acmeLogging = true
+onDemand = true
+OnHostRule = true
+#use dns registration
+[acme.dnsChallenge]
+  provider = "cloudflare"
+  delayBeforeCheck = 0
+# Request wildcard certificates per https://docs.traefik.io/configuration/acme/#wildcard-domains
+[[acme.domains]]
+  main = "*.thechances.us"
+  sans = ["thechances.us"]
+
+# Redirect all HTTP to HTTPS (why wouldn't you?)
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+      entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+
+[web]
+address = ":8080"
+watch = true
+
+[docker]
+endpoint = "tcp://127.0.0.1:2375"
+domain = "thechances.us"
+watch = true
+swarmmode = true
