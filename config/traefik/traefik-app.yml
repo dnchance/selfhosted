@@ -45,14 +45,12 @@ services:
       environment:
         - CLOUDFLARE_EMAIL=
         - CLOUDFLARE_API_KEY=
-        - CLIENT_ID=502085016305-rokugm4pr2vrstuv8lq5brgulscu45lh.apps.googleusercontent.com
-        - CLIENT_SECRET=gNo2vK3iSJSsP5Na3AZ5cOge
-        - SECRET=uGlqxIDzAHDDI
+        - CLIENT_ID=
+        - CLIENT_SECRET=
+        - SECRET=
         - INSECURE_COOKIE=false # Example assumes no https, do not use in production
         - AUTH_HOST=auth.thechances.us
-        - WHITELIST=dnchance@gmail.com
-        #- WHITELIST=jenniferchance26@gmail.com
-        #- WHITELIST=lesleysimone06@gmail.com
+        - WHITELIST=
       networks:
         - traefik_public
       #extra_hosts:
