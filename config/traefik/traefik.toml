@@ -1,10 +1,19 @@
 checkNewVersion = true
 defaultEntryPoints = ["http", "https"]
 
+# Enable the Dashboard
+[api]
+  dashboard = true
+
+# Write out Traefik logs
+[log]
+  level = "INFO"
+  filePath = "/traefik.log"
+
 # This section enable LetsEncrypt automatic certificate generation / renewal
 [acme]
 email = "dnchance@gmail.com"
-storage = "acme.json" # or "traefik/acme/account" if using KV store
+storage = "acme.json"
 entryPoint = "https"
 acmeLogging = true
 onDemand = true
@@ -12,7 +21,8 @@ OnHostRule = true
 #use dns registration
 [acme.dnsChallenge]
   provider = "cloudflare"
-  delayBeforeCheck = 0
+  delayBeforeCheck = 0# Email address used for registration
+  resolvers = ["8.8.4.4:53", "8.8.8.8:53"]
 # Request wildcard certificates per https://docs.traefik.io/configuration/acme/#wildcard-domains
 [[acme.domains]]
   main = "*.thechances.us"
@@ -37,3 +47,22 @@ endpoint = "tcp://127.0.0.1:2375"
 domain = "thechances.us"
 watch = true
 swarmmode = true
+
+[backends]
+  [backends.backend1]
+
+  [backends.backend1.servers]
+    [backends.dsm]
+    [backends.backend1.servers.server0]
+    url = "http://192.168.1.148:5000" #local address of the service
+
+[frontends]
+  [frontends.frontend1]
+  entryPoints = ["https"]
+  backend = "backend1"
+  passHostHeader = true
+  [frontends.frontend1.routes]
+    [frontends.frontend1.routes.0]
+    rule = "Host:dsm.thechances.us"
+
+watch=true
