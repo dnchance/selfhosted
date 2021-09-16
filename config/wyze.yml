@@ -11,6 +11,12 @@ services:
             - 1935:1935
             - 8554:8554
             - 8888:8888
-        environment:
+        deploy:
+          labels:
+            - traefik.port=8888
+            - traefik.frontend.rule=Host:radarr.thechances.us
+            - traefik.frontend.auth.forward.address=http://traefik-forward-auth:4181
+            - traefik.frontend.auth.forward.trustForwardHeader=true  
+         environment:
             - WYZE_EMAIL=${WYZE_EMAIL} # Replace with wyze email 
             - WYZE_PASSWORD=${WYZE_PASSWORD} # Replace with wyze password
